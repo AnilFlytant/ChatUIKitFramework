@@ -5,7 +5,9 @@
 //  Created by Aura on 13/06/25.
 //
 
-struct ChatMessage {
+import UIKit
+
+public struct ChatMessage {
     let text: String
     let isUser: Bool
 }

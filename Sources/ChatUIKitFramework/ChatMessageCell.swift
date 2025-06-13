@@ -4,7 +4,7 @@
 //
 //  Created by Aura on 13/06/25.
 //
-
+import UIKit
 class ChatMessageCell: UITableViewCell {
     let bubbleView = UIView()
     let messageLabel = UILabel()
