@@ -11,6 +11,30 @@ public protocol ChatUIKitDelegate: AnyObject {
     func didSendMessage(_ message: String)
 }
 
+public struct ChatUIStyle {
+    public var userMessageColor: UIColor
+    public var agentMessageColor: UIColor
+    public var userTextColor: UIColor
+    public var agentTextColor: UIColor
+    public var font: UIFont
+    public var backgroundColor: UIColor
+
+    public init(userMessageColor: UIColor = .blue,
+                agentMessageColor: UIColor = .lightGray,
+                userTextColor: UIColor = .white,
+                agentTextColor: UIColor = .black,
+                font: UIFont = .systemFont(ofSize: 16),
+                backgroundColor: UIColor = .white) {
+        self.userMessageColor = userMessageColor
+        self.agentMessageColor = agentMessageColor
+        self.userTextColor = userTextColor
+        self.agentTextColor = agentTextColor
+        self.font = font
+        self.backgroundColor = backgroundColor
+    }
+}
+
+
 public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextViewDelegate {
 
     public weak var delegate: ChatUIKitDelegate?
@@ -22,7 +46,17 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
     private let inputContainer = UIView()
     private let inputTextView = UITextView()
     private let sendButton = UIButton(type: .system)
+    
 
+    public init(style: ChatUIStyle = ChatUIStyle()) {
+        self.style = style
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -164,49 +198,34 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
     }
 }
 
-class ChatMessageCell: UITableViewCell {
-    let bubbleView = UIView()
-    let messageLabel = UILabel()
+public class ChatMessageCell: UITableViewCell {
+    private let messageLabel = UILabel()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
-        contentView.addSubview(bubbleView)
-        bubbleView.addSubview(messageLabel)
-
-        bubbleView.layer.cornerRadius = 14
         messageLabel.numberOfLines = 0
-        messageLabel.font = UIFont.systemFont(ofSize: 16)
-        bubbleView.translatesAutoresizingMaskIntoConstraints = false
+        messageLabel.layer.cornerRadius = 10
+        messageLabel.layer.masksToBounds = true
+        contentView.addSubview(messageLabel)
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
-    }
-
-    func configure(with message: ChatMessage) {
-        messageLabel.text = message.text
-        let isUser = message.isUser
-
-        bubbleView.backgroundColor = isUser ? UIColor.black : UIColor.systemGray6
-        messageLabel.textColor = isUser ? .white : .black
-        messageLabel.textAlignment = isUser ? .right : .left
-
-        // Layout constraints for left/right bubble
-        if isUser {
-            bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12).isActive = true
-        } else {
-            bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12).isActive = true
-        }
 
         NSLayoutConstraint.activate([
-            bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            messageLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 8),
-            messageLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -8),
-            messageLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 12),
-            messageLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -12),
+            messageLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            messageLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            messageLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            messageLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         ])
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    public func configure(with message: ChatMessage, style: ChatUIStyle) {
+        messageLabel.text = message.text
+        messageLabel.textAlignment = message.isUser ? .right : .left
+        messageLabel.font = style.font
+        messageLabel.textColor = message.isUser ? style.userTextColor : style.agentTextColor
+        messageLabel.backgroundColor = message.isUser ? style.userMessageColor : style.agentMessageColor
     }
 }
