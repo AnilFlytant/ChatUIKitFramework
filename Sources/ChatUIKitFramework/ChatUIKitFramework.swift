@@ -29,6 +29,12 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
+    
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        scrollToBottom()
+    }
+
 
     public func addMessage(_ message: ChatMessage) {
         messages.append(message)
@@ -137,10 +143,15 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
     }
 
     private func scrollToBottom() {
-        if messages.count > 0 {
-            tableView.scrollToRow(at: IndexPath(row: messages.count - 1, section: 0), at: .bottom, animated: true)
+        guard messages.count > 0 else { return }
+        DispatchQueue.main.async {
+            let indexPath = IndexPath(row: self.messages.count - 1, section: 0)
+            if self.tableView.numberOfRows(inSection: 0) > indexPath.row {
+                self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+            }
         }
     }
+
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messages.count
