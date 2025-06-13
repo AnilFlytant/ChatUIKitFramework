@@ -230,10 +230,10 @@ public class ChatMessageCell: UITableViewCell {
         messageLabel.textAlignment = message.isUser ? .right : .left
         messageLabel.font = style.font
         messageLabel.textColor = message.isUser ? style.userTextColor : style.agentTextColor
-        bubbleView.backgroundColor = isUser ? style.userMessageColor : style.agentMessageColor
+        bubbleView.backgroundColor = message.isUser ? style.userMessageColor : style.agentMessageColor
 
         // Layout constraints for left/right bubbleAdd commentMore actions
-        if isUser {
+        if message.isUser {
             bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12).isActive = true
         } else {
             bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12).isActive = true
