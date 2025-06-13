@@ -10,4 +10,9 @@ import UIKit
 public struct ChatMessage {
     let text: String
     let isUser: Bool
+    
+    public init(text: String, isUser: Bool) {
+        self.text = text
+        self.isUser = isUser
+    }
 }
