@@ -194,7 +194,7 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChatMessageCell
-        cell.configure(with: message, style: style)
+        cell.configure(with: message[indexPath.row], style: style)
         return cell
     }
 }
