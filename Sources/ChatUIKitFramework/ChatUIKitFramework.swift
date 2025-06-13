@@ -39,6 +39,7 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
 
     public weak var delegate: ChatUIKitDelegate?
     private var inputContainerBottomConstraint: NSLayoutConstraint?
+    private var style: ChatUIStyle
 
     private var messages: [ChatMessage] = []
 
