@@ -46,8 +46,10 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
     private let tableView = UITableView()
     private let inputContainer = UIView()
     private let inputTextView = UITextView()
+    private let attachButton = UIButton(type: .system)
     private let sendButton = UIButton(type: .system)
-    
+    private let maxTextViewHeight: CGFloat = 100
+
 
     public init(style: ChatUIStyle = ChatUIStyle()) {
         self.style = style
@@ -60,6 +62,7 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        setupInputContainer()
         setupUI()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -91,54 +94,88 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = style.backgroundColor
 
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
         tableView.register(ChatMessageCell.self, forCellReuseIdentifier: "cell")
 
-        inputTextView.delegate = self
-        inputTextView.layer.borderColor = UIColor.gray.cgColor
-        inputTextView.layer.borderWidth = 1
-        inputTextView.layer.cornerRadius = 8
-
         sendButton.setTitle("Send", for: .normal)
         sendButton.addTarget(self, action: #selector(sendTapped), for: .touchUpInside)
 
         view.addSubview(tableView)
-        view.addSubview(inputContainer)
-        inputContainer.addSubview(inputTextView)
-        inputContainer.addSubview(sendButton)
 
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        inputContainer.translatesAutoresizingMaskIntoConstraints = false
         inputTextView.translatesAutoresizingMaskIntoConstraints = false
         sendButton.translatesAutoresizingMaskIntoConstraints = false
 
-        inputContainerBottomConstraint = inputContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-        inputContainerBottomConstraint?.isActive = true
-
+        
         NSLayoutConstraint.activate([
-            inputContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            inputContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            inputContainerBottomConstraint!,
-            inputContainer.heightAnchor.constraint(equalToConstant: 50),
-
-            inputTextView.leadingAnchor.constraint(equalTo: inputContainer.leadingAnchor, constant: 8),
-            inputTextView.centerYAnchor.constraint(equalTo: inputContainer.centerYAnchor),
-            inputTextView.heightAnchor.constraint(equalToConstant: 36),
-
-            sendButton.leadingAnchor.constraint(equalTo: inputTextView.trailingAnchor, constant: 8),
-            sendButton.trailingAnchor.constraint(equalTo: inputContainer.trailingAnchor, constant: -8),
-            sendButton.centerYAnchor.constraint(equalTo: inputContainer.centerYAnchor),
-            sendButton.widthAnchor.constraint(equalToConstant: 60),
-
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: inputContainer.topAnchor)
         ])
+    }
+    
+    
+    private func setupInputContainer() {
+        inputContainer.backgroundColor = style.backgroundColor
+        view.addSubview(inputContainer)
+        inputContainer.translatesAutoresizingMaskIntoConstraints = false
+
+        attachButton.setImage(UIImage(systemName: "paperclip"), for: .normal)
+        attachButton.tintColor = .black
+        attachButton.layer.cornerRadius = 18
+        attachButton.backgroundColor = .white
+        attachButton.translatesAutoresizingMaskIntoConstraints = false
+
+        sendButton.setImage(UIImage(systemName: "paperplane.fill"), for: .normal)
+        sendButton.tintColor = .black
+        sendButton.translatesAutoresizingMaskIntoConstraints = false
+
+        inputTextView.font = .systemFont(ofSize: 16)
+        inputTextView.isScrollEnabled = false
+        inputTextView.layer.borderColor = UIColor.lightGray.cgColor
+        inputTextView.layer.borderWidth = 1
+        inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+        inputTextView.translatesAutoresizingMaskIntoConstraints = false
+        inputTextView.delegate = self
+
+        inputContainer.addSubview(attachButton)
+        inputContainer.addSubview(inputTextView)
+        inputContainer.addSubview(sendButton)
+        
+        inputContainerBottomConstraint = inputContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        inputContainerBottomConstraint?.isActive = true
+
+
+        NSLayoutConstraint.activate([
+            inputContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            inputContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            inputContainerBottomConstraint!,
+            inputContainer.heightAnchor.constraint(greaterThanOrEqualToConstant: 50),
+
+            attachButton.leadingAnchor.constraint(equalTo: inputContainer.leadingAnchor, constant: 8),
+            attachButton.centerYAnchor.constraint(equalTo: inputContainer.centerYAnchor),
+            attachButton.widthAnchor.constraint(equalToConstant: 36),
+            attachButton.heightAnchor.constraint(equalToConstant: 36),
+
+            sendButton.trailingAnchor.constraint(equalTo: inputContainer.trailingAnchor, constant: -8),
+            sendButton.centerYAnchor.constraint(equalTo: inputContainer.centerYAnchor),
+            sendButton.widthAnchor.constraint(equalToConstant: 36),
+            sendButton.heightAnchor.constraint(equalToConstant: 36),
+
+            inputTextView.leadingAnchor.constraint(equalTo: attachButton.trailingAnchor, constant: 8),
+            inputTextView.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -8),
+            inputTextView.topAnchor.constraint(equalTo: inputContainer.topAnchor, constant: 8),
+            inputTextView.bottomAnchor.constraint(equalTo: inputContainer.bottomAnchor, constant: -8)
+        ])
+
+        inputTextViewHeightConstraint = inputTextView.heightAnchor.constraint(equalToConstant: 36)
+        inputTextViewHeightConstraint.isActive = true
+
     }
     
     @objc private func keyboardWillShow(notification: Notification) {
