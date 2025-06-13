@@ -179,7 +179,7 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
 
     }
     
-    func textViewDidChange(_ textView: UITextView) {
+    public func textViewDidChange(_ textView: UITextView) {
         let size = CGSize(width: textView.frame.width, height: .infinity)
         let estimatedSize = textView.sizeThatFits(size)
 
