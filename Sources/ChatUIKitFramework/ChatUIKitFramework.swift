@@ -35,7 +35,20 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
         tableView.reloadData()
         scrollToBottom()
     }
+    
+    public func loadMessages(_ newMessages: [ChatMessage]) {
+        messages = newMessages
+        tableView.reloadData()
+        scrollToBottom()
+    }
 
+    public func appendMessage(_ message: ChatMessage) {
+        messages.append(message)
+        let indexPath = IndexPath(row: messages.count - 1, section: 0)
+        tableView.insertRows(at: [indexPath], with: .automatic)
+        scrollToBottom()
+    }
+    
     private func setupUI() {
         view.backgroundColor = .white
 
@@ -120,6 +133,7 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
         guard !text.isEmpty else { return }
         delegate?.didSendMessage(text)
         inputTextView.text = ""
+        inputTextView.resignFirstResponder()
     }
 
     private func scrollToBottom() {
