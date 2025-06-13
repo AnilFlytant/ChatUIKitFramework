@@ -49,6 +49,7 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
     private let attachButton = UIButton(type: .system)
     private let sendButton = UIButton(type: .system)
     private let maxTextViewHeight: CGFloat = 100
+    private var inputTextViewHeightConstraint: NSLayoutConstraint!
 
 
     public init(style: ChatUIStyle = ChatUIStyle()) {
@@ -177,6 +178,16 @@ public class ChatUIKitViewController: UIViewController, UITableViewDelegate, UIT
         inputTextViewHeightConstraint.isActive = true
 
     }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        let size = CGSize(width: textView.frame.width, height: .infinity)
+        let estimatedSize = textView.sizeThatFits(size)
+
+        let newHeight = min(estimatedSize.height, maxTextViewHeight)
+        inputTextView.isScrollEnabled = estimatedSize.height > maxTextViewHeight
+        inputTextViewHeightConstraint.constant = newHeight
+    }
+
     
     @objc private func keyboardWillShow(notification: Notification) {
         if let userInfo = notification.userInfo,
