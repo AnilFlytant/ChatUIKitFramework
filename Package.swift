@@ -4,19 +4,22 @@ import PackageDescription
 let package = Package(
     name: "ChatUIKitFramework",
     platforms: [
-        .iOS(.v13)  // or later depending on your needs
+        .iOS(.v13)
     ],
     products: [
         .library(
             name: "ChatUIKitFramework",
-            targets: ["ChatUIKitFramework"]),
+            targets: ["ChatUIKitFramework"]
+        )
     ],
     targets: [
         .target(
             name: "ChatUIKitFramework",
-            dependencies: []),
+            dependencies: []
+        ),
         .testTarget(
             name: "ChatUIKitFrameworkTests",
-            dependencies: ["ChatUIKitFramework"]),
+            dependencies: ["ChatUIKitFramework"]
+        )
     ]
 )
